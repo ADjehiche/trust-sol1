@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         walletChecked: targetPublicKey.toString(),
         requestedBy: connectedPublicKey.toString()
       });
-    } catch (e) {
+    } catch (err) {
       return NextResponse.json({ 
         error: 'Invalid public key format' 
       }, { status: 400 });
