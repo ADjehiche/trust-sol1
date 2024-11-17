@@ -1,5 +1,5 @@
-import { Connection, PublicKey, clusterApiUrl, SystemProgram } from '@solana/web3.js';
-import { AnchorProvider, Program, BN, Idl } from '@project-serum/anchor';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+import { AnchorProvider, Program, Idl } from '@project-serum/anchor';
 import idl from './idl.json';
 
 // Add this type declaration at the top of the file
