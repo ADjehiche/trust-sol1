@@ -16,15 +16,14 @@ export async function POST(request: Request) {
       const targetPublicKey = new PublicKey(walletAddress);
       const connectedPublicKey = new PublicKey(phantomWalletAddress);
       
-      // Your credit score calculation logic here
-      // For now, return a mock response
       return NextResponse.json({
         success: true,
         message: "Credit score calculation initiated",
         walletChecked: targetPublicKey.toString(),
         requestedBy: connectedPublicKey.toString()
       });
-    } catch (err) {
+    } catch (error) {
+      console.error('Public key validation error:', error);
       return NextResponse.json({ 
         error: 'Invalid public key format' 
       }, { status: 400 });
