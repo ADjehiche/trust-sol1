@@ -26,7 +26,6 @@ export default function Home() {
 
   // Check for Phantom wallet and connection status
   useEffect(() => {
-    setIsLoading(true);
     const checkWalletConnection = async () => {
       try {
         if (typeof window !== "undefined" && window.solana) {
