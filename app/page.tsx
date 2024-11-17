@@ -26,6 +26,7 @@ export default function Home() {
 
   // Check for Phantom wallet and connection status
   useEffect(() => {
+    setIsLoading(true);
     const checkWalletConnection = async () => {
       try {
         if (typeof window !== "undefined" && window.solana) {
@@ -80,7 +81,7 @@ export default function Home() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       if (!isWalletConnected) {
         setError("Please connect your wallet first");
         return;
@@ -135,7 +136,9 @@ export default function Home() {
     <div className="space-y-4">
       {!isWalletConnected ? (
         <div>
-          <Button onClick={connectWallet}>Connect Phantom Wallet</Button>
+          <Button onClick={connectWallet} disabled={isLoading}>
+            {isLoading ? "Connecting..." : "Connect Phantom Wallet"}
+          </Button>
           <p className="mt-2 text-sm text-gray-600">
             Please connect your wallet to continue
           </p>
@@ -150,8 +153,11 @@ export default function Home() {
             placeholder="Enter Solana wallet address to check"
             value={walletAddress}
             onChange={(e) => setWalletAddress(e.target.value)}
+            disabled={isLoading}
           />
-          <Button onClick={handleCalculateScore}>Calculate Credit Score</Button>
+          <Button onClick={handleCalculateScore} disabled={isLoading}>
+            {isLoading ? "Calculating..." : "Calculate Credit Score"}
+          </Button>
         </div>
       )}
       {error && <p className="text-red-500">{error}</p>}
