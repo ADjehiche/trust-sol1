@@ -1,46 +1,38 @@
 import { NextResponse } from 'next/server';
-import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { getProgram } from '@/app/services/solana';
-import { BN } from '@project-serum/anchor';
+import { PublicKey } from '@solana/web3.js';
 
 export async function POST(request: Request) {
   try {
-    // Parse the request body to get the wallet address
-    const { walletAddress } = await request.json();
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Missing wallet address' }, { status: 400 });
+    const { walletAddress, phantomWalletAddress } = await request.json();
+    
+    if (!walletAddress || !phantomWalletAddress) {
+      return NextResponse.json({ 
+        error: 'Missing required parameters' 
+      }, { status: 400 });
     }
 
-    const publicKey = new PublicKey(walletAddress);
-
-    // Get the Anchor program instance
-    const program = getProgram();
-
-    // Ensure the provider is connected
-    const provider = program.provider;
-    if (!provider || !provider.publicKey) {
-      return NextResponse.json({ error: 'Wallet not connected' }, { status: 401 });
+    // Validate addresses
+    try {
+      const targetPublicKey = new PublicKey(walletAddress);
+      const connectedPublicKey = new PublicKey(phantomWalletAddress);
+      
+      // Your credit score calculation logic here
+      // For now, return a mock response
+      return NextResponse.json({
+        success: true,
+        message: "Credit score calculation initiated",
+        walletChecked: targetPublicKey.toString(),
+        requestedBy: connectedPublicKey.toString()
+      });
+    } catch (e) {
+      return NextResponse.json({ 
+        error: 'Invalid public key format' 
+      }, { status: 400 });
     }
-
-    // Send the transaction to initialize the account
-    const txHash = await program.methods
-      .initialize(new BN(42))
-      .accounts({
-        newAccount: publicKey,
-        signer: provider.publicKey,
-        systemProgram: SystemProgram.programId,
-      })
-      .rpc();
-
-    // Return the transaction hash
-    return NextResponse.json({ txHash });
   } catch (err) {
-    if (err instanceof Error) {
-      console.error('Error initializing account:', err.message);
-      return NextResponse.json({ error: err.message }, { status: 500 });
-    } else {
-      console.error('Unknown error:', err);
-      return NextResponse.json({ error: 'An unknown error occurred' }, { status: 500 });
-    }
+    console.error('API Error:', err);
+    return NextResponse.json({ 
+      error: err instanceof Error ? err.message : 'Unknown error occurred' 
+    }, { status: 500 });
   }
 }
