@@ -22,6 +22,7 @@ export default function Home() {
     string | null
   >(null);
   const [result, setResult] = useState<CreditScoreResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Check for Phantom wallet and connection status
   useEffect(() => {
@@ -77,6 +78,9 @@ export default function Home() {
 
   const handleCalculateScore = async () => {
     try {
+      setIsLoading(true);
+      setError(null);
+      
       if (!isWalletConnected) {
         setError("Please connect your wallet first");
         return;
@@ -106,7 +110,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           walletAddress: walletAddress.trim(),
-          phantomWalletAddress, // Include connected wallet address
+          phantomWalletAddress,
         }),
       });
 
@@ -116,14 +120,14 @@ export default function Home() {
         throw new Error(data.error || "Failed to calculate credit score");
       }
 
-      console.log("API Response:", data);
-      setError(null);
       setResult(data);
     } catch (err) {
       console.error("Calculate score error:", err);
       setError(
         err instanceof Error ? err.message : "Failed to calculate credit score"
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
